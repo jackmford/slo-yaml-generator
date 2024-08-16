@@ -1,8 +1,0 @@
-apiVersion: openslo/v1
-kind: Service
-metadata:
-  name: test
-  displayName: test
-  project: test
-spec:
-  description: test

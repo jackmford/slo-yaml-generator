@@ -13,6 +13,7 @@ def make_service(args):
 
     template = Template(yaml_template)
     values = {
+        "project_name": args.project_name,
         "service_name": args.resource_name
     }
 
@@ -27,7 +28,8 @@ def make_service(args):
     print(out)
     if out == 0:
         print("yay")
-        out = os.system("oslo convert -f ./templates/tmp-service.yaml -o nobl9 > tmp-service.yaml")
+        out = os.system(f"oslo convert -f ./templates/tmp-service.yaml -p {args.project_name} -o nobl9 > ./output/service.yaml")
+    os.remove("./templates/tmp-service.yaml")
     return
 
 
