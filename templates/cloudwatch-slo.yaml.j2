@@ -1,0 +1,35 @@
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: {{ slo_name }}
+  displayName: {{ slo_name }}
+spec:
+  service: {{ service_name }}
+  indicator:
+    metadata:
+      name: {{ sli_name }}
+      displayName: {{ sli_name }}
+    spec:
+      thresholdMetric:
+        metricSource:
+          type: {{ metric_source }}
+          spec:
+            rawMetric:
+              query:
+                cloudwatch:
+                  region: {{ region }}
+                  namespace: {{ aws_service }}
+                  metricName: {{ metric_name }}
+                  stat: {{ statistic }}
+                  dimensions:
+                    - name: FunctionName
+                      value: LambdaName # make variable
+  objectives:
+    - displayName: {{ slo_name }}
+      op: {{ operation }}
+      value: {{ value }}
+      target: {{ target }}
+  timeWindow:
+    - duration: {{ duration }}
+      isRolling: {{ is_rolling }}
+  budgetingMethod: {{ budgeting_method }}

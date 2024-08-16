@@ -10,11 +10,48 @@ def make_slo(args):
     service_name = input("Service name\n")
     print(service_name)
     sli_name = input("SLI Name\n")
-    metric_source = input("Metric Source (CW/Dynatrace)\n")
-    region = input("Region\n")
-    aws_service = input("AWS Service\n")
-    metric_name = input("Metric name\n")
-    statistic = input("Statistic\n")
+    metric_source = input("Metric Source (Cloudwatch/Dynatrace)\n")
+    if metric_source.lower() == "cloudwatch":
+        region = input("Region\n")
+        aws_service = input("AWS Service\n")
+        metric_name = input("Metric name\n")
+        statistic = input("Statistic\n")
+
+        # TODO: figure out how to do dimensions
+
+    elif metric_source.lower() == "dynatrace":
+        query = input("Query\n")
+
+    slo_name = input("SLO Name\n")
+    operation = input("Operation (gte, lte, gt, lt)\n")
+    value = input("SLI Value\n")
+    target = input("SLO Target\n")
+    time_window = input("Time Window (28d, 24h, etc.)\n")
+    is_rolling = input("True/False\n")
+    budgeting_method = input("Occurrences/Timeslices\n")
+
+    values = {
+        "service_name": service_name,
+        "sli_name": sli_name,
+        "metric_source": metric_source,
+        "slo_name": slo_name,
+        "operation": operation,
+        "value": value,
+        "target": target,
+        "time_window" : time_window,
+        "is_rolling": is_rolling,
+        "budgeting_method": budgeting_method
+    }
+
+    if metric_source.lower() == "cloudwatch":
+        values["region"] = region
+        values["aws_service"] = aws_service
+        values["metric_name"] = metric_name
+        values["statistic"] statistic
+    elif metric_source.lower() == "dynatrace":
+        values["query"] = query
+
+
 
 def make_service(args):
     with open("./templates/openslo-service.yaml.j2", "r") as file:
