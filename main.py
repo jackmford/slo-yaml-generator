@@ -4,8 +4,17 @@ import os
 
 from jinja2 import Template
 
-
 logger = logging.getLogger(__name__)
+
+def make_slo(args):
+    service_name = input("Service name\n")
+    print(service_name)
+    sli_name = input("SLI Name\n")
+    metric_source = input("Metric Source (CW/Dynatrace)\n")
+    region = input("Region\n")
+    aws_service = input("AWS Service\n")
+    metric_name = input("Metric name\n")
+    statistic = input("Statistic\n")
 
 def make_service(args):
     with open("./templates/openslo-service.yaml.j2", "r") as file:
@@ -31,7 +40,6 @@ def make_service(args):
         out = os.system(f"oslo convert -f ./templates/tmp-service.yaml -p {args.project_name} -o nobl9 > ./output/service.yaml")
     os.remove("./templates/tmp-service.yaml")
     return
-
 
 def make_project(project_name):
     with open("./templates/project.yaml.j2", "r") as file:
@@ -61,6 +69,8 @@ def main():
         make_project(args)
     elif args.resource_type.lower() == "service":
         make_service(args)
+    elif args.resource_type.lower() == "slo":
+        make_slo(args)
     logger.debug(args)
     return
 
