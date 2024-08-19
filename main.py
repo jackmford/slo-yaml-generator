@@ -6,6 +6,18 @@ from jinja2 import Template
 
 logger = logging.getLogger(__name__)
 
+def make_file(yaml_input, filename, args):
+    with open(f"./output/openslo-formatted-{filename}", "w") as file:
+        file.write(yaml_input)
+        file.close()
+    out = os.system(f"oslo validate -f ./output/openslo-formatted-{filename}")
+    print(out)
+    if out == 0:
+        print("yay")
+        out = os.system(f"oslo convert -f ./output/openslo-formatted-{filename} -p {args.project_name} -o nobl9 > ./output/nobl9-formatted-{filename}")
+    return
+
+
 def make_slo(args):
     service_name = input("Service name\n")
     print(service_name)
@@ -47,14 +59,14 @@ def make_slo(args):
         values["region"] = region
         values["aws_service"] = aws_service
         values["metric_name"] = metric_name
-        values["statistic"] statistic
+        values["statistic"] = statistic
     elif metric_source.lower() == "dynatrace":
         values["query"] = query
 
 
 
 def make_service(args):
-    with open("./templates/openslo-service.yaml.j2", "r") as file:
+    with open("./templates/service.yaml.j2", "r") as file:
         yaml_template = file.read()
 
     template = Template(yaml_template)
@@ -67,15 +79,7 @@ def make_service(args):
         values["description"] = args.description
 
     processed_service = template.render(values)
-    with open("./templates/tmp-service.yaml", "w") as file:
-        file.write(processed_service)
-        file.close()
-    out = os.system("oslo validate -f ./templates/tmp-service.yaml")
-    print(out)
-    if out == 0:
-        print("yay")
-        out = os.system(f"oslo convert -f ./templates/tmp-service.yaml -p {args.project_name} -o nobl9 > ./output/service.yaml")
-    os.remove("./templates/tmp-service.yaml")
+    make_file(processed_service, f"{args.resource_name}-service.yaml", args)
     return
 
 def make_project(project_name):
