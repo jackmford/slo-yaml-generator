@@ -12,15 +12,16 @@ spec:
     spec:
       thresholdMetric:
         metricSource:
+          metricSourceRef: cw
           type: {{ metric_source }}
           spec:
             rawMetric:
               query:
                 cloudwatch:
+                  stat: {{ statistic }}
                   region: {{ region }}
                   namespace: {{ aws_service }}
                   metricName: {{ metric_name }}
-                  stat: {{ statistic }}
                   dimensions:
                     - name: FunctionName
                       value: LambdaName # make variable

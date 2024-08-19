@@ -1,0 +1,17 @@
+{
+  "service_name": "test",
+  "sli_name": "test",
+  "metric_source": "CloudWatch",
+  "slo_name": "test",
+  "operation": "lt",
+  "value": "100",
+  "target": ".99",
+  "duration": "28d",
+  "is_rolling": "True",
+  "budgeting_method": "Occurrences",
+  "region": "us-east-1",
+  "aws_service": "Lambda",
+  "metric_name": "Errors",
+  "statistic": "Sum"
+}
+

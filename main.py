@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import os
 
@@ -19,50 +20,24 @@ def make_file(yaml_input, filename, args):
 
 
 def make_slo(args):
-    service_name = input("Service name\n")
-    print(service_name)
-    sli_name = input("SLI Name\n")
-    metric_source = input("Metric Source (Cloudwatch/Dynatrace)\n")
-    if metric_source.lower() == "cloudwatch":
-        region = input("Region\n")
-        aws_service = input("AWS Service\n")
-        metric_name = input("Metric name\n")
-        statistic = input("Statistic\n")
+    if args.config_file:
+        with open("./config/slo.json", "r") as file:
+            json_config = json.loads(file.read())
+    # Get cloudwatch specific fields
+    if json_config["metric_source"].lower() == "cloudwatch":
 
-        # TODO: figure out how to do dimensions
+        with open("./templates/cloudwatch-slo.yaml.j2", "r") as file:
+            yaml_template = file.read()
 
-    elif metric_source.lower() == "dynatrace":
+        template = Template(yaml_template)
+        processed_slo = template.render(json_config)
+
+    # Get dynatrace specific fields
+    elif json_config["metric_source"].lower() == "dynatrace":
         query = input("Query\n")
+        json_config["query"] = query
 
-    slo_name = input("SLO Name\n")
-    operation = input("Operation (gte, lte, gt, lt)\n")
-    value = input("SLI Value\n")
-    target = input("SLO Target\n")
-    time_window = input("Time Window (28d, 24h, etc.)\n")
-    is_rolling = input("True/False\n")
-    budgeting_method = input("Occurrences/Timeslices\n")
-
-    values = {
-        "service_name": service_name,
-        "sli_name": sli_name,
-        "metric_source": metric_source,
-        "slo_name": slo_name,
-        "operation": operation,
-        "value": value,
-        "target": target,
-        "time_window" : time_window,
-        "is_rolling": is_rolling,
-        "budgeting_method": budgeting_method
-    }
-
-    if metric_source.lower() == "cloudwatch":
-        values["region"] = region
-        values["aws_service"] = aws_service
-        values["metric_name"] = metric_name
-        values["statistic"] = statistic
-    elif metric_source.lower() == "dynatrace":
-        values["query"] = query
-
+    make_file(processed_slo, f"{args.resource_name}-slo.yaml", args)
 
 
 def make_service(args):
@@ -102,6 +77,7 @@ def main():
     parser.add_argument("--resource_type", help="Project, SLO, Service, Integration", required=True)
     parser.add_argument("--resource_name", help="Resource name", required=True)
     parser.add_argument("--description", help="Description of resource")
+    parser.add_argument("--config_file", help="Config file location")
     args = parser.parse_args()
 
     print(args)
