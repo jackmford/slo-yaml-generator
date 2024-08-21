@@ -20,9 +20,8 @@ def make_file(yaml_input, filename, args):
 
 
 def make_slo(args):
-    if args.config_file:
-        with open("./config/slo.json", "r") as file:
-            json_config = json.loads(file.read())
+    with open("./config/slo.json", "r") as file:
+        json_config = json.loads(file.read())
     # Get cloudwatch specific fields
     if json_config["metric_source"].lower() == "cloudwatch":
 
