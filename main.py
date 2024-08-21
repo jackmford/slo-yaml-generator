@@ -41,8 +41,11 @@ def make_slo(args):
 
 
 def make_service(args):
+    with open("./config/service.json", "r") as file:
+        json_config = json.loads(file.read())
+
     with open("./templates/service.yaml.j2", "r") as file:
-        yaml_template = file.read()
+            yaml_template = file.read()
 
     template = Template(yaml_template)
     values = {
@@ -50,10 +53,7 @@ def make_service(args):
         "service_name": args.resource_name
     }
 
-    if args.description:
-        values["description"] = args.description
-
-    processed_service = template.render(values)
+    processed_service = template.render(json_config)
     make_file(processed_service, f"{args.resource_name}-service.yaml", args)
     return
 
