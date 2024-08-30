@@ -13,6 +13,7 @@ Quickly generate OpenSLO and Nobl9 yaml so I can stop going and looking at the d
     ```
 The script takes a json file containing the fields needed for each template.
 
+Files are currently sent to the ./output/ directory. I plan to add an option to configure this soon.
 
 Example:
 ```bash
