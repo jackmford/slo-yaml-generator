@@ -2,20 +2,22 @@
 
 :bangbang: This project is under development and subject to change :bangbang:
 
-Quickly generate OpenSLO and Nobl9 yaml so I can stop going and looking at the doc
+Quickly generate [OpenSLO](https://github.com/OpenSLO/OpenSLO) and
+[Nobl9](https://docs.nobl9.com/yaml-guide) yaml so I can stop going and looking
+at the doc
 
 ## Usage
 
 1. Clone the repo
 1. Install dependencies to your virtual env with
-    ```bash
-    pip install -r requirements.txt
-    ```
-The script takes a json file containing the fields needed for each template.
+   `bash     pip install -r requirements.txt     ` The script takes a json file
+   containing the fields needed for each template.
 
-Files are currently sent to the ./output/ directory. I plan to add an option to configure this soon.
+Files are currently sent to the ./output/ directory. I plan to add an option to
+configure this soon.
 
 Example:
+
 ```bash
 python3 main.py --resource_type slo --config_file "example-configs/cloudwatch-slo.json"
 ```
@@ -36,7 +38,7 @@ python3 main.py --resource_type slo --config_file "example-configs/cloudwatch-sl
   "target": ".99",
   "duration": "28d",
   "is_rolling": "True",
-  "budgeting_method": "Occurrences",
+  "budgeting_method": "Occurrences"
 }
 ```
 
@@ -55,7 +57,7 @@ For metric_source Dynatrace please include these fields:
 
 ```json
 {
-    "query": "dynatrace query"
+  "query": "dynatrace query"
 }
 ```
 
