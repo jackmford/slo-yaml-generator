@@ -1,5 +1,7 @@
 # slo-yaml-generator
 
+:bangbang: This project is under development and subject to change :bangbang:
+
 Quickly generate OpenSLO and Nobl9 yaml so I can stop going and looking at the doc
 
 ## Usage
