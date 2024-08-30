@@ -1,17 +1,20 @@
 # slo-yaml-generator
 
-:bangbang: This project is under development and subject to change :bangbang:
+:bangbang: This project is under development and subject to change. :bangbang:
 
 Quickly generate [OpenSLO](https://github.com/OpenSLO/OpenSLO) and
 [Nobl9](https://docs.nobl9.com/yaml-guide) yaml so I can stop going and looking
-at the doc
+at the doc.
 
 ## Usage
 
-1. Clone the repo
-1. Install dependencies to your virtual env with
-   `bash     pip install -r requirements.txt     ` The script takes a json file
-   containing the fields needed for each template.
+1. Clone the repo.
+1. Install dependencies to your virtual env with:
+   ```bash
+   pip install -r requirements.txt`
+   ```
+
+The script takes a json file containing the fields needed for each template.
 
 Files are currently sent to the ./output/ directory. I plan to add an option to
 configure this soon.
