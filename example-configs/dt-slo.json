@@ -1,0 +1,16 @@
+
+{
+  "resource_name": "My New SLO",
+  "service_name": "Service Name",
+  "project_name": "Jack's Project",
+  "sli_name": "test indicator",
+  "metric_source": "Dynatrace",
+  "operation": "lt",
+  "value": "100",
+  "target": ".99",
+  "duration": "28d",
+  "is_rolling": "True",
+  "budgeting_method": "Occurrences",
+  "query": "this is my dynatrace query"
+}
+

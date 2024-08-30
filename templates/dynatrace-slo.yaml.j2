@@ -1,0 +1,31 @@
+apiVersion: openslo/v1
+kind: SLO
+metadata:
+  name: {{ resource_name }}
+  displayName: {{ resource_name }}
+spec:
+  service: {{ service_name }}
+  indicator:
+    metadata:
+      name: {{ sli_name }}
+      displayName: {{ sli_name }}
+    spec:
+      thresholdMetric:
+        metricSource:
+          metricSourceRef: cw
+          type: {{ metric_source }}
+          spec:
+            rawMetric:
+              query:
+                dynatrace:
+                  metricSelector: {{ query }}
+  objectives:
+    - displayName: {{ resource_name }}
+      op: {{ operation }}
+      value: {{ value }}
+      target: {{ target }}
+  timeWindow:
+    - duration: {{ duration }}
+      isRolling: {{ is_rolling }}
+  budgetingMethod: {{ budgeting_method }}
+
