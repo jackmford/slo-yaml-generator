@@ -1,4 +1,5 @@
 {
-  "service_name": "This is a test service",
-  "description": "This is a test description"
+  "resource_name": "This is a test service",
+  "project_name": "Jack's Project",
+  "description": "This is a test description for Jack's little tool for SLO consulting"
 }

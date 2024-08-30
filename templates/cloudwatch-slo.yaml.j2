@@ -1,8 +1,8 @@
 apiVersion: openslo/v1
 kind: SLO
 metadata:
-  name: {{ slo_name }}
-  displayName: {{ slo_name }}
+  name: {{ resource_name }}
+  displayName: {{ resource_name }}
 spec:
   service: {{ service_name }}
   indicator:
@@ -26,7 +26,7 @@ spec:
                     - name: FunctionName
                       value: LambdaName # make variable
   objectives:
-    - displayName: {{ slo_name }}
+    - displayName: {{ resource_name }}
       op: {{ operation }}
       value: {{ value }}
       target: {{ target }}

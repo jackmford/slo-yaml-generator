@@ -1,13 +1,16 @@
+
 import argparse
 import json
 import logging
 import os
+import re
 
 from jinja2 import Template
 
 logger = logging.getLogger(__name__)
 
-def make_file(yaml_input, filename, args):
+
+def make_file(yaml_input, filename, project_name):
     with open(f"./output/openslo-formatted-{filename}", "w") as file:
         file.write(yaml_input)
         file.close()
@@ -15,28 +18,47 @@ def make_file(yaml_input, filename, args):
     print(out)
     if out == 0:
         print("yay")
-        out = os.system(f"oslo convert -f ./output/openslo-formatted-{filename} -p {args.project_name} -o nobl9 > ./output/nobl9-formatted-{filename}")
+        out = os.system(f"oslo convert -f ./output/openslo-formatted-{filename} -p {project_name} -o nobl9 > ./output/nobl9-formatted-{filename}")
     return
 
 
 def make_slo(args):
-    with open("./config/slo.json", "r") as file:
+    with open(args.config_file, "r") as file:
         json_config = json.loads(file.read())
     # Get cloudwatch specific fields
-    if json_config["metric_source"].lower() == "cloudwatch":
+    if not "description" in json_config.keys():
+        json_config["description"] = ""
 
+    json_config["resource_name"] = json_config["resource_name"].replace(" ", "-").lower()
+    json_config["resource_name"] = re.sub(r"[^a-zA-Z0-9_-]+", "", json_config["resource_name"])
+
+    json_config["project_name"] = json_config["project_name"].replace(" ", "-").lower()
+    json_config["project_name"]= re.sub(r"[^a-zA-Z0-9_-]+", "", json_config["project_name"])
+
+    if json_config["metric_source"].lower() == "cloudwatch":
         with open("./templates/cloudwatch-slo.yaml.j2", "r") as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
         processed_slo = template.render(json_config)
 
-    # Get dynatrace specific fields
     elif json_config["metric_source"].lower() == "dynatrace":
-        query = input("Query\n")
-        json_config["query"] = query
+        with open("./templates/cloudwatch-slo.yaml.j2", "r") as file:
+            yaml_template = file.read()
 
-    make_file(processed_slo, f"{args.resource_name}-slo.yaml", args)
+        template = Template(yaml_template)
+        processed_slo = template.render(json_config)
+
+    else:
+        return
+
+    make_file(processed_slo, f"{json_config["resource_name"]}-slo.yaml", json_config["project_name"])
+
+
+def clean_name(name):
+    name = name.replace(" ", "-").lower()
+    name = re.sub(r"[^a-zA-Z0-9_-]+", "", name)
+    return name
 
 
 def make_service(args):
@@ -47,14 +69,14 @@ def make_service(args):
             yaml_template = file.read()
 
     template = Template(yaml_template)
-    values = {
-        "project_name": args.project_name,
-        "service_name": args.resource_name
-    }
+
+    json_config["resource_name"] = clean_name(json_config["resource_name"])
+    json_config["project_name"] = clean_name(json_config["project_name"])
 
     processed_service = template.render(json_config)
-    make_file(processed_service, f"{args.resource_name}-service.yaml", args)
+    make_file(processed_service, f"{json_config["resource_name"]}-service.yaml", json_config["project_name"])
     return
+
 
 def make_project(project_name):
     with open("./templates/project.yaml.j2", "r") as file:
@@ -70,24 +92,19 @@ def make_project(project_name):
     print(processed_project)
     return
 
+
 def main():
     parser = argparse.ArgumentParser(description='Process Nobl9 yaml inputs.')
-    parser.add_argument("--project_name", help="Project Name", required=True)
     parser.add_argument("--resource_type", help="Project, SLO, Service, Integration", required=True)
-    parser.add_argument("--resource_name", help="Resource name", required=True)
-    parser.add_argument("--description", help="Description of resource")
     parser.add_argument("--config_file", help="Config file location")
     args = parser.parse_args()
 
-    print(args)
-    print(args.resource_type)
     if args.resource_type.lower() == "project":
         make_project(args)
     elif args.resource_type.lower() == "service":
         make_service(args)
     elif args.resource_type.lower() == "slo":
         make_slo(args)
-    logger.debug(args)
     return
 
 if __name__ == "__main__":
