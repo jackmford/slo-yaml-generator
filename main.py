@@ -1,12 +1,9 @@
 import argparse
 import json
-import logging
 import os
 import re
 
 from jinja2 import Template
-
-logger = logging.getLogger(__name__)
 
 
 def clean_name(name):
