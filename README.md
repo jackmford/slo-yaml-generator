@@ -11,7 +11,7 @@ at the doc.
 1. Clone the repo.
 1. Install dependencies to your virtual env with:
    ```bash
-   pip install -r requirements.txt`
+   pip install -r requirements.txt
    ```
 
 The script takes a json file containing the fields needed for each template.
