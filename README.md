@@ -68,7 +68,7 @@ For metric_source Dynatrace please include these fields:
 
 ## Project (Nobl9 format only)
 
-```
+```json
 {
   "resource_name": "This is a test project",
   "description": "This is a test description for Jack's little tool for SLO consulting"
