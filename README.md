@@ -1,4 +1,4 @@
-# nobl9-yaml-generator
+# slo-yaml-generator
 
 Quickly generate OpenSLO and Nobl9 yaml so I can stop going and looking at the doc
 
