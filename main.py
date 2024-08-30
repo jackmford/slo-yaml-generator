@@ -10,6 +10,12 @@ from jinja2 import Template
 logger = logging.getLogger(__name__)
 
 
+def clean_name(name):
+    name = name.replace(" ", "-").lower()
+    name = re.sub(r"[^a-zA-Z0-9_-]+", "", name)
+    return name
+
+
 def make_file(yaml_input, filename, project_name):
     with open(f"./output/openslo-formatted-{filename}", "w") as file:
         file.write(yaml_input)
@@ -55,12 +61,6 @@ def make_slo(args):
     make_file(processed_slo, f"{json_config["resource_name"]}-slo.yaml", json_config["project_name"])
 
 
-def clean_name(name):
-    name = name.replace(" ", "-").lower()
-    name = re.sub(r"[^a-zA-Z0-9_-]+", "", name)
-    return name
-
-
 def make_service(args):
     with open("./config/service.json", "r") as file:
         json_config = json.loads(file.read())
@@ -78,18 +78,23 @@ def make_service(args):
     return
 
 
-def make_project(project_name):
+def make_project():
+    with open("./config/service.json", "r") as file:
+        json_config = json.loads(file.read())
+
     with open("./templates/project.yaml.j2", "r") as file:
         yaml_template = file.read()
 
     template = Template(yaml_template)
-    values = {
-        "project_name": project_name
-    }
 
-    processed_project = template.render(values)
-    # Need to write tmp file, push it to n9, and delete it
-    print(processed_project)
+    # Save original name as display name
+    json_config["project_display_name"] = json_config["resource_name"]
+    # Clean it for actual project name
+    json_config["resource_name"] = clean_name(json_config["resource_name"])
+
+    processed_project = template.render(json_config)
+    with open(f"./output/{json_config["resource_name"]}-project.yaml", "w") as file:
+        file.write(processed_project)
     return
 
 
@@ -100,12 +105,13 @@ def main():
     args = parser.parse_args()
 
     if args.resource_type.lower() == "project":
-        make_project(args)
+        make_project()
     elif args.resource_type.lower() == "service":
         make_service(args)
     elif args.resource_type.lower() == "slo":
         make_slo(args)
     return
+
 
 if __name__ == "__main__":
     main()
