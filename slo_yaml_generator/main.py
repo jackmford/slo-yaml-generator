@@ -5,6 +5,8 @@ import json
 import os
 import re
 
+from slo_yaml_generator import templates
+
 from jinja2 import Template
 
 
