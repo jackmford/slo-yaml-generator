@@ -8,11 +8,10 @@ at the doc.
 
 ## Usage
 
-1. Clone the repo.
-1. Install dependencies to your virtual env with:
-   ```bash
-   pip install -r requirements.txt
-   ```
+1. Install using pip
+    ```
+    pip install slo_yaml_generator
+    ```
 
 The script takes a json file containing the fields needed for each template.
 
@@ -22,7 +21,7 @@ configure this soon.
 Example:
 
 ```bash
-python3 main.py --resource_type slo --config_file "example-configs/cloudwatch-slo.json"
+slo_yaml_generator --resource_type slo --config_file "example-configs/cloudwatch-slo.json"
 ```
 
 ## Config Files
