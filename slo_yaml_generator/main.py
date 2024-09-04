@@ -1,4 +1,6 @@
 import argparse
+import importlib.resources as pkg_resources
+import templates
 import json
 import os
 import re
@@ -45,14 +47,14 @@ def make_slo(args):
     )
 
     if json_config["metric_source"].lower() == "cloudwatch":
-        with open("./templates/cloudwatch-slo.yaml.j2", "r") as file:
+        with pkg_resources.open_text(templates, "cloudwatch-slo.yaml.j2") as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
         processed_slo = template.render(json_config)
 
     elif json_config["metric_source"].lower() == "dynatrace":
-        with open("./templates/dynatrace-slo.yaml.j2", "r") as file:
+        with pkg_resources.open_text(templates, "dynatrace-slo.yaml.j2") as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
@@ -72,7 +74,7 @@ def make_service(args):
     with open(f"{args.config_file}", "r") as file:
         json_config = json.loads(file.read())
 
-    with open("./templates/service.yaml.j2", "r") as file:
+    with pkg_resources.open_text(templates, "service.yaml.j2") as file:
         yaml_template = file.read()
 
     template = Template(yaml_template)
@@ -93,7 +95,7 @@ def make_project(args):
     with open(f"{args.config_file}", "r") as file:
         json_config = json.loads(file.read())
 
-    with open("./templates/project.yaml.j2", "r") as file:
+    with pkg_resources.open_text(templates, "project.yaml.j2") as file:
         yaml_template = file.read()
 
     template = Template(yaml_template)
@@ -114,7 +116,7 @@ def main():
     parser.add_argument(
         "--resource_type", help="Project, SLO, Service, Integration", required=True
     )
-    parser.add_argument("--config_file", help="Config file location")
+    parser.add_argument("--config_file", help="Config file location", required=True)
     args = parser.parse_args()
 
     if args.resource_type.lower() == "project":
