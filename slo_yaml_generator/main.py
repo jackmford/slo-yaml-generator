@@ -3,6 +3,7 @@ import importlib.resources as pkg_resources
 import json
 import os
 import re
+import sys
 
 from slo_yaml_generator import templates
 
@@ -14,10 +15,23 @@ RESOURCE_TYPES = [
     "service",
 ]
 
+
 def clean_name(name):
     name = name.replace(" ", "-").lower()
     name = re.sub(r"[^a-zA-Z0-9_-]+", "", name)
     return name
+
+
+def open_config_file(file_path):
+    try:
+        with open(file_path, "r") as file:
+            json_config = json.loads(file.read())
+    except FileNotFoundError:
+        print(f"{file_path} not found. Please check your path.")
+        sys.exit(1)
+
+    return json_config
+
 
 
 def make_file(yaml_input, filename, project_name):
@@ -38,8 +52,7 @@ def make_file(yaml_input, filename, project_name):
 
 
 def make_slo(args):
-    with open(args.config_file, "r") as file:
-        json_config = json.loads(file.read())
+    json_config = open_config_file(args.config_file)
     # Get cloudwatch specific fields
     if not "description" in json_config.keys():
         json_config["description"] = ""
@@ -79,8 +92,7 @@ def make_slo(args):
 
 
 def make_service(args):
-    with open(f"{args.config_file}", "r") as file:
-        json_config = json.loads(file.read())
+    json_config = open_config_file(args.config_file)
 
     with pkg_resources.open_text(templates, "service.yaml.j2") as file:
         yaml_template = file.read()
@@ -100,8 +112,7 @@ def make_service(args):
 
 
 def make_project(args):
-    with open(f"{args.config_file}", "r") as file:
-        json_config = json.loads(file.read())
+    json_config = open_config_file(args.config_file)
 
     with pkg_resources.open_text(templates, "project.yaml.j2") as file:
         yaml_template = file.read()
