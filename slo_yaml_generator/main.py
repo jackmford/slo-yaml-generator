@@ -67,14 +67,18 @@ def make_slo(args):
     )
 
     if json_config["metric_source"].lower() == "cloudwatch":
-        with pkg_resources.files(templates).joinpath("cloudwatch-slo.yaml.j2").open("r") as file:
+        with pkg_resources.files(templates).joinpath("cloudwatch-slo.yaml.j2").open(
+            "r"
+        ) as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
         processed_slo = template.render(json_config)
 
     elif json_config["metric_source"].lower() == "dynatrace":
-        with pkg_resources.files(templates).joinpath("dynatrace-slo.yaml.j2").open("r") as file:
+        with pkg_resources.files(templates).joinpath("dynatrace-slo.yaml.j2").open(
+            "r"
+        ) as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
