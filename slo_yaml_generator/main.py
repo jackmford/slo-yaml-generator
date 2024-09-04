@@ -33,7 +33,6 @@ def open_config_file(file_path):
     return json_config
 
 
-
 def make_file(yaml_input, filename, project_name):
     if not os.path.exists("./output"):
         os.makedirs("./output")
