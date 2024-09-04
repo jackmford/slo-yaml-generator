@@ -1,9 +1,8 @@
 name: Python Package
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'  # This triggers the workflow when a version tag is pushed
+  release:
+    types: [created]
 
 jobs:
   build:
