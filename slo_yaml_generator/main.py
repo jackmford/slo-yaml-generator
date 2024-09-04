@@ -16,6 +16,8 @@ def clean_name(name):
 
 
 def make_file(yaml_input, filename, project_name):
+    if not os.path.exists("./output"):
+        os.makedirs("./output")
     with open(f"./output/openslo-formatted-{filename}", "w") as file:
         file.write(yaml_input)
         file.close()
