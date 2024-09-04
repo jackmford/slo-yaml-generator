@@ -67,14 +67,14 @@ def make_slo(args):
     )
 
     if json_config["metric_source"].lower() == "cloudwatch":
-        with pkg_resources.open_text(templates, "cloudwatch-slo.yaml.j2") as file:
+        with pkg_resources.files(templates).joinpath("cloudwatch-slo.yaml.j2").open("r") as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
         processed_slo = template.render(json_config)
 
     elif json_config["metric_source"].lower() == "dynatrace":
-        with pkg_resources.open_text(templates, "dynatrace-slo.yaml.j2") as file:
+        with pkg_resources.files(templates).joinpath("dynatrace-slo.yaml.j2").open("r") as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
@@ -93,7 +93,7 @@ def make_slo(args):
 def make_service(args):
     json_config = open_config_file(args.config_file)
 
-    with pkg_resources.open_text(templates, "service.yaml.j2") as file:
+    with pkg_resources.files(templates).joinpath("service.yaml.j2").open("r") as file:
         yaml_template = file.read()
 
     template = Template(yaml_template)
@@ -113,7 +113,7 @@ def make_service(args):
 def make_project(args):
     json_config = open_config_file(args.config_file)
 
-    with pkg_resources.open_text(templates, "project.yaml.j2") as file:
+    with pkg_resources.files(templates).joinpath("project.yaml.j2").open("r") as file:
         yaml_template = file.read()
 
     template = Template(yaml_template)
