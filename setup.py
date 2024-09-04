@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='slo_yaml_generator',
-    version='0.0.3',
+    version='0.0.4',
     author='Jack Fordyce',
     author_email='jackmitchellfordyce@gmail.com',
     description='Generate OpenSLO and Nobl9 yaml configuration',
