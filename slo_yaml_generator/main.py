@@ -3,16 +3,34 @@ import importlib.resources as pkg_resources
 import json
 import os
 import re
+import sys
 
 from slo_yaml_generator import templates
 
 from jinja2 import Template
+
+RESOURCE_TYPES = [
+    "slo",
+    "project",
+    "service",
+]
 
 
 def clean_name(name):
     name = name.replace(" ", "-").lower()
     name = re.sub(r"[^a-zA-Z0-9_-]+", "", name)
     return name
+
+
+def open_config_file(file_path):
+    try:
+        with open(file_path, "r") as file:
+            json_config = json.loads(file.read())
+    except FileNotFoundError:
+        print(f"{file_path} not found. Please check your path.")
+        sys.exit(1)
+
+    return json_config
 
 
 def make_file(yaml_input, filename, project_name):
@@ -33,8 +51,7 @@ def make_file(yaml_input, filename, project_name):
 
 
 def make_slo(args):
-    with open(args.config_file, "r") as file:
-        json_config = json.loads(file.read())
+    json_config = open_config_file(args.config_file)
     # Get cloudwatch specific fields
     if not "description" in json_config.keys():
         json_config["description"] = ""
@@ -50,14 +67,14 @@ def make_slo(args):
     )
 
     if json_config["metric_source"].lower() == "cloudwatch":
-        with pkg_resources.open_text(templates, "cloudwatch-slo.yaml.j2") as file:
+        with pkg_resources.files(templates).joinpath("cloudwatch-slo.yaml.j2").open("r") as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
         processed_slo = template.render(json_config)
 
     elif json_config["metric_source"].lower() == "dynatrace":
-        with pkg_resources.open_text(templates, "dynatrace-slo.yaml.j2") as file:
+        with pkg_resources.files(templates).joinpath("dynatrace-slo.yaml.j2").open("r") as file:
             yaml_template = file.read()
 
         template = Template(yaml_template)
@@ -74,10 +91,9 @@ def make_slo(args):
 
 
 def make_service(args):
-    with open(f"{args.config_file}", "r") as file:
-        json_config = json.loads(file.read())
+    json_config = open_config_file(args.config_file)
 
-    with pkg_resources.open_text(templates, "service.yaml.j2") as file:
+    with pkg_resources.files(templates).joinpath("service.yaml.j2").open("r") as file:
         yaml_template = file.read()
 
     template = Template(yaml_template)
@@ -95,10 +111,9 @@ def make_service(args):
 
 
 def make_project(args):
-    with open(f"{args.config_file}", "r") as file:
-        json_config = json.loads(file.read())
+    json_config = open_config_file(args.config_file)
 
-    with pkg_resources.open_text(templates, "project.yaml.j2") as file:
+    with pkg_resources.files(templates).joinpath("project.yaml.j2").open("r") as file:
         yaml_template = file.read()
 
     template = Template(yaml_template)
@@ -128,6 +143,9 @@ def main():
         make_service(args)
     elif args.resource_type.lower() == "slo":
         make_slo(args)
+    else:
+        print("resource_type must be of type: " + str(RESOURCE_TYPES))
+
     return
 
 
