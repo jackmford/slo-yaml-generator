@@ -8,6 +8,11 @@ from slo_yaml_generator import templates
 
 from jinja2 import Template
 
+RESOURCE_TYPES = [
+    "slo",
+    "project",
+    "service",
+]
 
 def clean_name(name):
     name = name.replace(" ", "-").lower()
@@ -128,6 +133,9 @@ def main():
         make_service(args)
     elif args.resource_type.lower() == "slo":
         make_slo(args)
+    else:
+        print("resource_type must be of type: " + str(RESOURCE_TYPES))
+
     return
 
 
