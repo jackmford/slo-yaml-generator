@@ -1,0 +1,18 @@
+{
+  "resource_name": "My alert policy",
+  "project_name": "Jack's Project",
+  "description": "My description",
+  "alert_when_no_data": "true",
+  "alert_when_resolved": "true",
+  "alert_when_breaching": "true",
+  "condition_ref": "alert-condition",
+  "notification_target": "notif_target",
+  "alert_condition_name": "Alert condition",
+  "alert_condition_description": "Alert conidtion desc",
+  "kind": "burnrate",
+  "operator": "gte",
+  "threshold": "5",
+  "lookback_window": "1h",
+  "alert_after": "5m",
+  "severity": "critical"
+}

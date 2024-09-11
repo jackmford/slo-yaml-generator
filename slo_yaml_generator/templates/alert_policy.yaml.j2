@@ -1,0 +1,26 @@
+apiVersion: openslo/v1
+kind: AlertPolicy
+metadata:
+  name: {{ resource_name }}
+  displayName: {{ resource_name }}
+spec:
+  description: {{ description }}
+  alertWhenNoData: {{ alert_when_no_data }}
+  alertWhenResolved: {{ alert_when_resolved }}
+  alertWhenBreaching: {{ alert_when_breaching }}
+  conditions: 
+    - kind: AlertCondition
+      metadata:
+        name: {{ alert_condition_name }}
+        displayName: {{ alert_condition_name }}
+      spec:
+        description: {{ alert_condition_desc }}
+        severity: {{ severity }}
+        condition:
+          kind: {{ kind }}
+          op: {{ operator }}
+          threshold: {{ threshold }}
+          lookbackWindow: {{ lookback_window }}
+          alertAfter: {{ alert_after }}
+  notificationTargets:
+  - targetRef: {{ notification_target }}

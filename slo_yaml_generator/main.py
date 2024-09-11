@@ -13,8 +13,10 @@ RESOURCE_TYPES = [
     "slo",
     "project",
     "service",
+    "alert_policy",
+    "alert_condition",
+    "alert_notification_target",
 ]
-
 
 def clean_name(name):
     name = name.replace(" ", "-").lower()
@@ -33,14 +35,14 @@ def open_config_file(file_path):
     return json_config
 
 
-def make_file(yaml_input, filename, project_name):
+def make_file(yaml_input, filename, project_name, args):
     if not os.path.exists("./output"):
         os.makedirs("./output")
     with open(f"./output/openslo-formatted-{filename}", "w") as file:
         file.write(yaml_input)
         file.close()
     out = os.system(f"oslo validate -f ./output/openslo-formatted-{filename}")
-    if out == 0:
+    if out == 0 and args.nobl9:
         print("Converting OpenSLO format to Nobl9...")
         out = os.system(
             f"oslo convert -f ./output/openslo-formatted-{filename} -p {project_name} -o nobl9 > ./output/nobl9-formatted-{filename}"
@@ -87,6 +89,7 @@ def make_slo(args):
         processed_slo,
         f"{json_config["resource_name"]}-slo.yaml",
         json_config["project_name"],
+        args,
     )
 
 
@@ -106,9 +109,51 @@ def make_service(args):
         processed_service,
         f"{json_config["resource_name"]}-service.yaml",
         json_config["project_name"],
+        args,
     )
     return
 
+
+def make_alert_policy(args):
+    json_config = open_config_file(args.config_file)
+
+    with pkg_resources.files(templates).joinpath("alert_policy.yaml.j2").open("r") as file:
+        yaml_template = file.read()
+
+    template = Template(yaml_template)
+
+    json_config["resource_name"] = clean_name(json_config["resource_name"])
+    json_config["project_name"] = clean_name(json_config["project_name"])
+
+    processed_alert_policy = template.render(json_config)
+    make_file(
+        processed_alert_policy,
+        f"{json_config["resource_name"]}-alert-policy.yaml",
+        json_config["project_name"],
+        args,
+    )
+    return
+
+
+def make_alert_condition(args):
+    json_config = open_config_file(args.config_file)
+
+    with pkg_resources.files(templates).joinpath("alert_condition.yaml.j2").open("r") as file:
+        yaml_template = file.read()
+
+    template = Template(yaml_template)
+
+    json_config["resource_name"] = clean_name(json_config["resource_name"])
+    json_config["project_name"] = clean_name(json_config["project_name"])
+
+    processed_alert_policy = template.render(json_config)
+    make_file(
+        processed_alert_policy,
+        f"{json_config["resource_name"]}-alert-condition.yaml",
+        json_config["project_name"],
+        args,
+    )
+    return
 
 def make_project(args):
     json_config = open_config_file(args.config_file)
@@ -135,6 +180,7 @@ def main():
         "--resource_type", help="Project, SLO, Service, Integration", required=True
     )
     parser.add_argument("--config_file", help="Config file location", required=True)
+    parser.add_argument("--nobl9", help="Generate Nobl9 configuration", nargs="?", const=True, default=False)
     args = parser.parse_args()
 
     if args.resource_type.lower() == "project":
@@ -143,6 +189,10 @@ def main():
         make_service(args)
     elif args.resource_type.lower() == "slo":
         make_slo(args)
+    elif args.resource_type.lower() == "alert_policy":
+        make_alert_policy(args)
+    elif args.resource_type.lower() == "alert_condition":
+        make_alert_condition(args)
     else:
         print("resource_type must be of type: " + str(RESOURCE_TYPES))
 

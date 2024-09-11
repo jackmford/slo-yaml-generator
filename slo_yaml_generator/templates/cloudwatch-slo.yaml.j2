@@ -12,7 +12,7 @@ spec:
     spec:
       thresholdMetric:
         metricSource:
-          metricSourceRef: cw
+          metricSourceRef: {{ metric_source_ref }}
           type: {{ metric_source }}
           spec:
             rawMetric:
@@ -34,3 +34,4 @@ spec:
     - duration: {{ duration }}
       isRolling: {{ is_rolling }}
   budgetingMethod: {{ budgeting_method }}
+  alertPolicies: {{ alert_policies }}

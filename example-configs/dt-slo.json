@@ -5,6 +5,7 @@
   "project_name": "Jack's Project",
   "sli_name": "test indicator",
   "metric_source": "Dynatrace",
+  "metric_source_ref": "dt-source",
   "operation": "lt",
   "value": "100",
   "target": ".99",
