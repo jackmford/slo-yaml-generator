@@ -36,16 +36,24 @@ def open_config_file(file_path):
 
 
 def make_file(yaml_input, filename, project_name, args):
-    if not os.path.exists("./output"):
-        os.makedirs("./output")
-    with open(f"./output/openslo-formatted-{filename}", "w") as file:
+    file_prefix = ""
+    if args.outdir:
+        file_prefix = args.outdir
+    else:
+        file_prefix = "output"
+
+    if not os.path.exists(file_prefix):
+        os.makedirs(file_prefix)
+
+    with open(f"{file_prefix}/openslo-formatted-{filename}", "w") as file:
         file.write(yaml_input)
         file.close()
-    out = os.system(f"oslo validate -f ./output/openslo-formatted-{filename}")
+
+    out = os.system(f"oslo validate -f {file_prefix}/openslo-formatted-{filename}")
     if out == 0 and args.nobl9:
         print("Converting OpenSLO format to Nobl9...")
         out = os.system(
-            f"oslo convert -f ./output/openslo-formatted-{filename} -p {project_name} -o nobl9 > ./output/nobl9-formatted-{filename}"
+            f"oslo convert -f {file_prefix}/openslo-formatted-{filename} -p {project_name} -o nobl9 > {file_prefix}/nobl9-formatted-{filename}"
         )
         if out == 0:
             print("Successfully converted.")
@@ -169,8 +177,15 @@ def make_project(args):
     json_config["resource_name"] = clean_name(json_config["resource_name"])
 
     processed_project = template.render(json_config)
-    with open(f"./output/{json_config["resource_name"]}-project.yaml", "w") as file:
-        file.write(processed_project)
+    #with open(f"./output/{json_config["resource_name"]}-project.yaml", "w") as file:
+    if args.outdir:
+        if not os.path.exists(args.outdir):
+            os.makedirs(args.outdir)
+        with open(f"{args.outdir}/{json_config["resource_name"]}-project.yaml", "w") as file:
+            file.write(processed_project)
+    else:
+        with open(f"./output/{json_config["resource_name"]}-project.yaml", "w") as file:
+            file.write(processed_project)
     return
 
 
@@ -181,6 +196,7 @@ def main():
     )
     parser.add_argument("--config_file", help="Config file location", required=True)
     parser.add_argument("--nobl9", help="Generate Nobl9 configuration", nargs="?", const=True, default=False)
+    parser.add_argument("--outdir", help="Specify directory to write output files")
     args = parser.parse_args()
 
     if args.resource_type.lower() == "project":
