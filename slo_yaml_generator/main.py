@@ -143,6 +143,27 @@ def make_alert_policy(args):
     return
 
 
+def make_alert_notification_target(args):
+    json_config = open_config_file(args.config_file)
+
+    with pkg_resources.files(templates).joinpath("alert_notification_target.yaml.j2").open("r") as file:
+        yaml_template = file.read()
+
+    template = Template(yaml_template)
+
+    json_config["resource_name"] = clean_name(json_config["resource_name"])
+    json_config["project_name"] = clean_name(json_config["project_name"])
+
+    processed_alert_policy = template.render(json_config)
+    make_file(
+        processed_alert_policy,
+        f"{json_config["resource_name"]}-alert-notification-target.yaml",
+        json_config["project_name"],
+        args,
+    )
+    return
+
+
 def make_alert_condition(args):
     json_config = open_config_file(args.config_file)
 
@@ -207,8 +228,8 @@ def main():
         make_slo(args)
     elif args.resource_type.lower() == "alert_policy":
         make_alert_policy(args)
-    elif args.resource_type.lower() == "alert_condition":
-        make_alert_condition(args)
+    elif args.resource_type.lower() == "alert_notification_target":
+        make_alert_notification_target(args)
     else:
         print("resource_type must be of type: " + str(RESOURCE_TYPES))
 

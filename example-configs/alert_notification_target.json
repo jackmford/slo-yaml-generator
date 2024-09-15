@@ -1,0 +1,7 @@
+{
+  "resource_name": "Alerting target",
+  "project_name": "Jack's Project",
+  "target": "webhook",
+  "description": "Alerting target description"
+}
+
