@@ -15,16 +15,13 @@ spec:
           metricSourceRef: {{ metric_source_ref }}
           type: {{ metric_source }}
           spec:
-            rawMetric:
-              query:
-                cloudwatch:
-                  stat: {{ statistic }}
-                  region: {{ region }}
-                  namespace: {{ aws_service }}
-                  metricName: {{ metric_name }}
-                  dimensions:
-                    - name: FunctionName
-                      value: LambdaName # make variable
+            stat: {{ statistic }}
+            region: {{ region }}
+            namespace: {{ aws_service }}
+            metricName: {{ metric_name }}
+            dimensions:
+              - name: FunctionName
+                value: LambdaName # make variable
   objectives:
     - displayName: {{ resource_name }}
       op: {{ operation }}
